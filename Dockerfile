@@ -12,7 +12,11 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
 
 # global environment settings
 ENV DEBIAN_FRONTEND="noninteractive"
-
+ARG AMD_MAJOR_VER=20.20
+ARG AMD_MINOR_VER=1098277
+ARG UBUNTU_VER=20.04
+ADD amdgpu-pro-$AMD_MAJOR_VER-$AMD_MINOR_VER-ubuntu-$UBUNTU_VER.tar.xz /tmp
+ADD 90forceyes /etc/apt/apt.conf.d/
 RUN \
  echo "**** install runtime packages ****" && \
  apt-get update && \
@@ -31,6 +35,7 @@ RUN \
 	/tmp/fah.deb -L \
 	"https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/${MAJOR_VERSION}/fahclient_${FOLDINGATHOME_RELEASE}_amd64.deb" && \
  dpkg -x /tmp/fah.deb /app && \
+ /tmp/ amdgpu-pro-$AMD_MAJOR_VER-$AMD_MINOR_VER-ubuntu-$UBUNTU_VER/amdgpu-pro-install --headless --no-32 && \
  echo "**** cleanup ****" && \
  apt-get clean && \
  rm -rf \
